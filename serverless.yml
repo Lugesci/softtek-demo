@@ -1,0 +1,101 @@
+service: serverless-api-demo
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  environment:
+    CURRENT_REGION: us-east-1
+    DYNAMODB_TABLE: people
+    SEQUENCE_TABLE: sequence
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:Scan"
+            - "dynamodb:PutItem"
+            - "dynamodb:GetItem"
+            - "dynamodb:UpdateItem"
+            - "dynamodb:DeleteItem"
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.SEQUENCE_TABLE}
+
+package:
+  individually: true
+  exclude:
+    - node_modules
+
+layers:
+  Shared:
+    path: layer
+    compatibleRuntimes:
+      - nodejs20.x
+    description: Layer compartido para softtek
+
+build:
+  esbuild:
+    exclude:
+      - axios
+      - class-transformer
+      - class-validator
+    external:
+      - axios
+      - class-transformer
+      - class-validator
+
+functions:
+  createPerson:
+    handler: src/people/interfaces/createPerson.handler
+    layers:
+      - { Ref: SharedLambdaLayer }
+    events:
+      - http:
+          path: people
+          method: post
+
+  getPerson:
+    handler: src/people/interfaces/getPerson.handler
+    layers:
+      - { Ref: SharedLambdaLayer }
+    events:
+      - http:
+          path: people/{id}
+          method: get
+
+  getAllPeople:
+    handler: src/people/interfaces/getAllPeople.handler
+    layers:
+      - { Ref: SharedLambdaLayer }
+    events:
+      - http:
+          path: people
+          method: get
+
+resources:
+  Resources:
+    PeopleDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: N
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    SequenceTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        TableName: ${self:provider.environment.SEQUENCE_TABLE}
+        AttributeDefinitions:
+          - AttributeName: sequence_name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: sequence_name
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST

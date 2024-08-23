@@ -26,6 +26,9 @@ dist/
 # JetBrains IDE
 .idea/
 
+# Serverless
+.serverless
+
 # Unit test reports
 TEST*.xml
 
