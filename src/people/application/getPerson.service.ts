@@ -51,18 +51,4 @@ export class GetPersonService {
       return null;
     }
   }
-
-  /*private async saveItemToDynamoDB(id: number, data: any): Promise<Person> {
-    const params = {
-      TableName: this.tableName,
-      Item: {
-        id,
-        ...data,
-      },
-    };
-    
-    const result = (await dynamoDb.send(new PutCommand(params))) as IPutCommandOutput<Person>;
-    
-    return result.Attributes;
-  }*/
 }

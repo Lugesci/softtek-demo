@@ -1,5 +1,3 @@
-import { plainToInstance } from "class-transformer";
-
 import { Person } from "../domain/person.entity";
 import { OutputPersonDto } from "../dto/OutputPersonDto";
 import { getNextId } from "../../shared/utils/getNextId";

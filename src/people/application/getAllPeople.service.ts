@@ -1,5 +1,3 @@
-import { plainToInstance } from "class-transformer";
-
 import { OutputPersonDto } from "../dto/OutputPersonDto";
 import { PersonRepository } from "../domain/person.repository";
 import { DynamoDbRepository } from "../infrastructure/dynamoDb.repository";

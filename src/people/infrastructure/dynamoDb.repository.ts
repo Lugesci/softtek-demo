@@ -1,4 +1,3 @@
-import axios from "axios";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   GetCommand,
@@ -15,7 +14,6 @@ import {
   IPutCommandOutput,
   IScanCommandOutput,
   IDeleteCommandOutput,
-  IUpdateCommandOutput,
 } from "../../types/dynamoDb.types";
 
 const client = new DynamoDBClient({
